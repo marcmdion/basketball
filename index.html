@@ -604,6 +604,14 @@
 
         // --- UTILS & UI UPDATES ---
         function updateScheduleTimes() {
+            const duration = parseInt(document.getElementById('gameDuration').value);
+            
+            // Update current timer if not running (e.g. before game start)
+            if (!isTimerRunning) {
+                timeRemaining = duration * 60;
+                updateTimerDisplay();
+            }
+            
             recalculateSchedule();
         }
 
