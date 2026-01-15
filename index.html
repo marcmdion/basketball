@@ -53,11 +53,7 @@
             </div>
             
             <div class="flex flex-wrap items-center gap-4 text-sm">
-                <div class="flex items-center gap-2 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700">
-                    <i class="far fa-clock text-gray-400"></i>
-                    <span>Start Time:</span>
-                    <input type="time" id="globalStartTime" value="18:00" onchange="updateScheduleTimes()" class="bg-transparent border-none focus:ring-0 text-white font-bold w-20 p-0">
-                </div>
+                <!-- Start Time Input Removed -->
                 <div class="flex items-center gap-2 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700">
                     <i class="fas fa-hourglass-half text-gray-400"></i>
                     <span>Duration:</span>
@@ -379,21 +375,10 @@
 
             let simHistory = {}; 
             
-            // --- TIME CALCULATION ---
-            const startVal = document.getElementById('globalStartTime').value;
-            const duration = parseInt(document.getElementById('gameDuration').value);
-            
-            let [startH, startM] = startVal.split(':').map(Number);
-            let currentTimeObj = new Date();
-            currentTimeObj.setHours(startH, startM, 0, 0);
-
             // --- SIMULATION BASE STATE ---
             // If a game is active, we must "simulate" it having been played
             // so the prediction logic for the next game knows these players are tired/played.
             if (currentGame.active) {
-                // Advance clock for next games
-                currentTimeObj = new Date(currentTimeObj.getTime() + duration * 60000);
-                
                 // Mark active players as having played an extra game in simulation
                 const activeIds = [...currentGame.teamA, ...currentGame.teamB].map(p => p.id);
                 
@@ -433,9 +418,6 @@
                             else simHistory[p.id].con = 0;
                         }
                     });
-
-                    // Advance clock
-                    currentTimeObj = new Date(currentTimeObj.getTime() + duration * 60000);
                 } else {
                     container.innerHTML = `<div class="text-center text-gray-500 py-4">Not enough active players (need 10+).</div>`;
                     return;
@@ -471,18 +453,12 @@
                     }
                 });
 
-                // Time String
-                let endTimeObj = new Date(currentTimeObj.getTime() + duration * 60000);
-                const timeStr = `${formatTime(currentTimeObj)} - ${formatTime(endTimeObj)}`;
-                currentTimeObj = endTimeObj;
-
                 // Render
                 const card = document.createElement('div');
                 card.className = "bg-gray-800/50 border border-gray-700 rounded-lg p-3";
                 card.innerHTML = `
                     <div class="flex justify-between text-xs text-orange-400 font-bold mb-2">
                         <span>GAME ${thisGameNum}</span>
-                        <span>${timeStr}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2 text-sm">
                         <div>
@@ -676,10 +652,6 @@
                 `;
                 stats.appendChild(statRow);
             });
-        }
-
-        function formatTime(date) {
-            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
         
         function resetAll() {
