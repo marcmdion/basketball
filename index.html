@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baller Scheduler by M. Dion</title>
+    <title>Baller Scheduler</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -71,7 +71,10 @@
             <div class="glass-panel p-4 flex flex-col h-[50vh] lg:h-auto">
                 <h2 class="text-xl text-orange-500 mb-3 flex justify-between items-center">
                     <span>ROSTER (<span id="playerCount">0</span>)</span>
-                    <button onclick="resetAll()" class="text-xs text-gray-500 hover:text-red-500">Reset All</button>
+                    <div class="flex gap-2">
+                        <button onclick="clearAllPlayers()" class="text-xs text-gray-500 hover:text-red-500">Clear All</button>
+                        <button onclick="resetAll()" class="text-xs text-gray-500 hover:text-blue-500">Reset Default</button>
+                    </div>
                 </h2>
                 
                 <div class="flex gap-2 mb-4">
@@ -662,12 +665,33 @@
             });
         }
         
+        function clearAllPlayers() {
+            showConfirm("Delete all players? The roster will be empty.", () => {
+                players = [];
+                currentGameNumber = 1;
+                currentGame = { active: false, teamA: [], teamB: [], scoreA: 0, scoreB: 0 };
+                
+                // Update UI elements for game
+                document.getElementById('scoreA').innerText = '0';
+                document.getElementById('scoreB').innerText = '0';
+                
+                resetTimer();
+                renderRoster();
+                recalculateSchedule();
+            });
+        }
+        
         function resetAll() {
             showConfirm("Reset everything? Roster will revert to default.", () => {
                 players = [];
                 currentGameNumber = 1;
                 PRELOADED_PLAYERS.forEach(name => addPlayerToState(name));
                 currentGame = { active: false, teamA: [], teamB: [], scoreA: 0, scoreB: 0 };
+                
+                // Update UI elements for game
+                document.getElementById('scoreA').innerText = '0';
+                document.getElementById('scoreB').innerText = '0';
+                
                 resetTimer();
                 renderRoster();
                 recalculateSchedule();
@@ -676,4 +700,3 @@
     </script>
 </body>
 </html>
-
